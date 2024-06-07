@@ -1,0 +1,10 @@
+https://warpcast.com/setianugraha/0x0fde8242  ( That A EXAMPLE ) 
+
+
+All you have to do is enter the warpcast link that you want to check
+
+whether you succeeded in liking or not 
+
+If successful, ONYO SUCCESS will be displayed with GREEN text 
+
+Don't worry, the cek-like.php file has been coded so that it only detects the URL in list-cast.txt
