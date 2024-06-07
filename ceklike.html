@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  //CODING BY SETIA NUGRAHA
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Like Status</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .output {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+        }
+
+        .output p {
+            margin: 5px 0;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Check Like Status</h1>
+        </header>
+        <button id="checkLikes">Check Likes</button>
+        <div id="output" class="output"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            var urls = [];
+
+            function fetchUrls() {
+                $.get('list-cast.txt', function(data) {
+                    urls = data.split('\n').filter(url => url.startsWith('http'));
+                    checkNextUrl();
+                });
+            }
+
+            function checkNextUrl() {
+                if (urls.length === 0) {
+                    $('#output').append('<p>All URLs have been checked.</p>');
+                    return;
+                }
+
+                var url = urls.shift();
+                $('#output').append('<p>Checking: ' + url + '</p>');
+
+                $.ajax({
+                    type: 'GET',
+                    url: 'cek-like.php',
+                    data: { url: url },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.result.startsWith("SUKSES ONYO")) {
+                            $('#output').append('<p class="success">' + response.result + '</p>');
+                        } else {
+                            $('#output').append('<p class="error">' + response.result + '</p>');
+                        }
+                        checkNextUrl();
+                    },
+                    error: function(xhr, status, error) {
+                        var errorMessage = xhr.status + ': ' + xhr.statusText;
+                        $('#output').append('<p class="error">Error: ' + errorMessage + '</p>');
+                        checkNextUrl();
+                    }
+                });
+            }
+
+            $('#checkLikes').click(function() {
+                $('#output').html('<p>Fetching URLs...</p>');
+                fetchUrls();
+            });
+        });
+    </script>
+</body>
+</html>
